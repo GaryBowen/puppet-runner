@@ -5,7 +5,6 @@ import (
 	"crypto/x509"
 	"flag"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -78,7 +77,7 @@ func httpClient() *http.Client {
 		log.Fatal(err)
 	}
 
-	caCert, err := ioutil.ReadFile(caCertPath)
+	caCert, err := os.ReadFile(caCertPath)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -90,7 +89,6 @@ func httpClient() *http.Client {
 		Certificates: []tls.Certificate{clientCert},
 		RootCAs:      caCertPool,
 	}
-	tlsConfig.BuildNameToCertificate()
 	transport := &http.Transport{TLSClientConfig: tlsConfig}
 
 	return &http.Client{
@@ -143,7 +141,7 @@ func main() {
 	log.Print("Starting puppet-runner...")
 	environment := puppetConfigGet("agent", "environment")
 
-	puppetArgs := []string{}
+	var puppetArgs []string
 	if len(cliArgs) > 0 {
 		puppetArgs = cliArgs
 	} else {
