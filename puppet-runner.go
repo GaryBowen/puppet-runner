@@ -134,17 +134,13 @@ func main() {
 	puppetEnv := flag.String("env", "production", "The Puppet environment to fall back to")
 	debugFlag := flag.Bool("debug", false, "Enable debugging information")
 	envResetDelay := flag.Int("env-reset-delay", 0, "Delay in minutes before reverting to fall back environment")
-
 	flag.Parse()
-	cliArgs := flag.Args()
 
 	log.Print("Starting puppet-runner...")
 	environment := puppetConfigGet("agent", "environment")
 
-	var puppetArgs []string
-	if len(cliArgs) > 0 {
-		puppetArgs = cliArgs
-	} else {
+	puppetArgs := flag.Args()
+	if len(puppetArgs) == 0 {
 		puppetArgs = []string{"agent", "--no-daemonize", "--onetime"}
 	}
 
